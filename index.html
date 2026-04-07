@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>투자 레이더 — 홈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#07090d;--bg2:#0d1018;--bg3:#141820;
+  --bd:rgba(255,255,255,0.06);--bd2:rgba(255,255,255,0.11);
+  --tx:#d6dae8;--tx2:#757d9a;--tx3:#3e4560;
+  --ac:#4c8df4;--ac2:rgba(76,141,244,0.12);
+  --up:#ee5f57;--gr:#3bc87f;--am:#f3a11c;--pu:#9b6cf5;
+  --mono:'DM Mono',monospace;--sans:'Noto Sans KR',sans-serif;
+  --r:12px;--rl:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:var(--sans);background:var(--bg);color:var(--tx);font-size:14px;line-height:1.6}
+
+header{
+  height:56px;padding:0 32px;display:flex;align-items:center;gap:14px;
+  background:rgba(7,9,13,.94);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100;
+}
+.logo{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.logo em{color:var(--ac);font-style:normal}
+.htime{margin-left:auto;font-size:11px;font-family:var(--mono);color:var(--tx3)}
+
+.hero{
+  max-width:900px;margin:80px auto 0;padding:0 32px;
+  text-align:center;
+}
+.hero-tag{
+  display:inline-block;font-size:10px;font-family:var(--mono);
+  background:var(--ac2);color:var(--ac);padding:4px 12px;
+  border-radius:20px;letter-spacing:.8px;margin-bottom:20px;
+}
+.hero h1{font-size:36px;font-weight:700;letter-spacing:-1px;margin-bottom:12px;line-height:1.25}
+.hero h1 em{color:var(--ac);font-style:normal}
+.hero p{font-size:15px;color:var(--tx2);line-height:1.8;max-width:560px;margin:0 auto 48px}
+
+.cards{
+  max-width:840px;margin:0 auto;padding:0 32px 80px;
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+}
+@media(max-width:600px){.cards{grid-template-columns:1fr}}
+
+.card{
+  background:var(--bg2);border:1px solid var(--bd);
+  border-radius:var(--rl);padding:28px;
+  text-decoration:none;color:var(--tx);
+  transition:all .2s;display:block;position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:0;opacity:0;
+  transition:opacity .2s;
+}
+.card-etf::before{background:radial-gradient(circle at 0% 0%,rgba(76,141,244,.08),transparent 60%)}
+.card-market::before{background:radial-gradient(circle at 0% 0%,rgba(238,95,87,.08),transparent 60%)}
+.card:hover{border-color:var(--bd2);transform:translateY(-2px)}
+.card:hover::before{opacity:1}
+
+.card-icon{
+  font-size:28px;margin-bottom:16px;
+  width:52px;height:52px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+}
+.icon-etf{background:var(--ac2)}
+.icon-market{background:rgba(238,95,87,.1)}
+
+.card-title{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--tx2);line-height:1.7;margin-bottom:18px}
+
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.tag{font-size:10px;font-family:var(--mono);padding:3px 9px;border-radius:20px;border:1px solid var(--bd2);color:var(--tx3)}
+
+.card-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:500;color:var(--ac);
+  font-family:var(--mono);
+}
+.card-link::after{content:'→';transition:transform .2s}
+.card:hover .card-link::after{transform:translateX(3px)}
+
+.status-row{
+  display:flex;align-items:center;gap:6px;
+  font-size:10px;font-family:var(--mono);color:var(--tx3);
+  margin-top:6px;
+}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--gr);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.divider{
+  max-width:840px;margin:0 auto;padding:0 32px 32px;
+}
+.divider-line{height:1px;background:var(--bd)}
+
+.info-section{
+  max-width:840px;margin:0 auto;padding:0 32px 80px;
+}
+.info-title{font-size:12px;font-family:var(--mono);color:var(--tx3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:16px}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.info-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px}
+.info-card-label{font-size:10px;color:var(--tx3);margin-bottom:4px;font-family:var(--mono)}
+.info-card-value{font-size:13px;font-weight:500;color:var(--tx2)}
+
+footer{
+  border-top:1px solid var(--bd);padding:20px 32px;
+  text-align:center;font-size:11px;color:var(--tx3);font-family:var(--mono);
+  line-height:1.8;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">투자 <em>레이더</em></div>
+  <div class="htime" id="htime">—</div>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">BETA · 개인 투자 도구</div>
+  <h1>한국 증시<br><em>실시간</em> 대시보드</h1>
+  <p>ETF 전체 시세부터 코스피·코스닥 거래대금 순위까지<br>시황 분석에 필요한 정보를 한 곳에서 확인하세요.</p>
+</div>
+
+<div class="cards">
+  <!-- ETF 레이더 -->
+  <a class="card card-etf" href="etf.html">
+    <div class="card-icon icon-etf">📊</div>
+    <div class="card-title">ETF 레이더</div>
+    <div class="card-desc">
+      한국 전체 상장 ETF 800개+를 실시간으로 조회합니다.
+      수익률·구성종목·비중변경·편입편출 내역을 한눈에 확인하세요.
+    </div>
+    <div class="card-tags">
+      <span class="tag">KRX 전체</span>
+      <span class="tag">KODEX</span>
+      <span class="tag">TIGER</span>
+      <span class="tag">타임폴리오</span>
+      <span class="tag">PLUS</span>
+      <span class="tag">800개+</span>
+    </div>
+    <div class="card-link">대시보드 열기</div>
+    <div class="status-row"><div class="sdot"></div>공공데이터 API 연동</div>
+  </a>
+
+  <!-- 시황 레이더 -->
+  <a class="card card-market" href="market.html">
+    <div class="card-icon icon-market">📈</div>
+    <div class="card-title">시황 레이더</div>
+    <div class="card-desc">
+      코스피·코스닥 거래대금 TOP 30 종목을 1분마다 자동갱신합니다.
+      수급·공시·뉴스·실적을 종목별로 빠르게 확인하세요.
+    </div>
+    <div class="card-tags">
+      <span class="tag">거래대금 TOP 30</span>
+      <span class="tag">외국인·기관 수급</span>
+      <span class="tag">DART 공시</span>
+      <span class="tag">네이버 뉴스</span>
+      <span class="tag">1분 갱신</span>
+    </div>
+    <div class="card-link">대시보드 열기</div>
+    <div class="status-row"><div class="sdot"></div>공공데이터 · DART · 네이버 API 연동</div>
+  </a>
+</div>
+
+<div class="divider"><div class="divider-line"></div></div>
+
+<div class="info-section">
+  <div class="info-title">데이터 출처 및 API 안내</div>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-card-label">① 공공데이터포털</div>
+      <div class="info-card-value">금융위원회 증권시세정보<br>data.go.kr — 무료</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">② DART 공시 API</div>
+      <div class="info-card-value">금융감독원 전자공시<br>opendart.fss.or.kr — 무료</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">③ 네이버 검색 API</div>
+      <div class="info-card-value">뉴스 검색<br>developers.naver.com — 무료</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">갱신 주기</div>
+      <div class="info-card-value">ETF: 수동 갱신<br>시황: 1분 자동갱신</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  투자 레이더 · 데이터는 공공 API 기준이며 실제 시세와 차이가 있을 수 있습니다<br>
+  본 사이트는 투자 참고용이며 투자 권유가 아닙니다 · 투자 결과의 책임은 투자자 본인에게 있습니다
+</footer>
+
+<script>
+setInterval(()=>{
+  const el=document.getElementById('htime');
+  if(el)el.textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+},1000);
+document.getElementById('htime').textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+</script>
+</body>
+</html>
