@@ -248,7 +248,7 @@ async function fetchRank(mkt){
 async function fetchSupply(code){try{return await wFetch(`/supply?code=${code}`);}catch{return null;}}
 async function fetchChart(code,period='D'){try{return await wFetch(`/chart?code=${code}&period=${period}`);}catch{return null;}}
 async function fetchMinute(code){try{return await wFetch(`/minute?code=${code}`);}catch{return null;}}
-async function fetchIncome(code){try{return await wFetch(`/income?code=${code}`);}catch{return null;}}
+async function fetchIncome(code){try{return await wFetch(`/dart-income?code=${code}`);}catch{return null;}}
 
 async function fetchDart(name){
   try{
@@ -448,18 +448,23 @@ async function renderDtab(s){
   }else if(curDtab==='disclosure'){
     const items=await fetchDart(s.name);
     if(!items.length){
-      c.innerHTML=`<div class="panel"><div class="pt">최근 공시 (DART)</div><div style="color:var(--tx3);font-size:12px;padding:12px 0">공시 데이터를 가져오지 못했습니다. <a href="https://dart.fss.or.kr/dsab001/search.ax?textCrpNm=${encodeURIComponent(s.name)}" target="_blank" style="color:var(--ac)">DART에서 직접 확인 ↗</a></div></div>`;
+      c.innerHTML=`<div class="panel"><div class="pt">최근 공시 (DART)</div><div style="color:var(--tx3);font-size:12px;padding:12px 0">공시 데이터를 가져오지 못했습니다. <a href="https://dart.fss.or.kr/dsab001/search.ax?textCrpNm=${encodeURIComponent(s.name)}" target="_blank" rel="noopener" style="color:var(--ac)">DART에서 직접 확인 ↗</a></div></div>`;
       return;
     }
     c.innerHTML=`<div class="panel"><div class="pt">최근 공시 (DART)</div>
-      ${items.map(d=>`
-        <div class="disc-item">
+      ${items.map(d=>{
+        // rcept_no로 올바른 DART URL 생성
+        const dartUrl = d.url && d.url.includes('rcpNo=')
+          ? d.url
+          : `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${d.rcept_no||''}`;
+        return `<div class="disc-item">
           <div class="disc-top">
             <span class="disc-pill dp-공시">공시</span>
-            <a class="disc-title" href="${d.url}" target="_blank" rel="noopener">${d.title}</a>
+            <a class="disc-title" href="${dartUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${d.title}</a>
           </div>
           <div class="disc-meta">${f.date(d.date)}</div>
-        </div>`).join('')}
+        </div>`;
+      }).join('')}
     </div>`;
 
   }else if(curDtab==='news'){
