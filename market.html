@@ -222,8 +222,14 @@ function startCountdown(){
 
 // ── API ──
 async function wFetch(path){
-  const res=await fetch(WORKER+path,{signal:AbortSignal.timeout(20000)});
-  return res.json();
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),20000);
+  try{
+    const res=await fetch(WORKER+path,{signal:controller.signal});
+    return res.json();
+  }finally{
+    clearTimeout(timer);
+  }
 }
 async function safeFetch(url,opts){
   try{const r=await fetch(url,{signal:AbortSignal.timeout(10000),...(opts||{})});if(r.ok)return r;}catch{}
