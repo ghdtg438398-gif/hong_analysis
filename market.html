@@ -250,9 +250,9 @@ async function fetchChart(code,period='D'){try{return await wFetch(`/chart?code=
 async function fetchMinute(code){try{return await wFetch(`/minute?code=${code}`);}catch{return null;}}
 async function fetchIncome(code){try{return await wFetch(`/dart-income?code=${code}`);}catch{return null;}}
 
-async function fetchDart(name){
+async function fetchDart(code, name){
   try{
-    const r1=await wFetch(`/dart/company.json?corp_name=${encodeURIComponent(name)}`);
+    const r1=await wFetch(`/dart/company.json?stock_code=${code}`);
     if(!r1?.corp_code)return[];
     const today=new Date();
     const bgn=new Date(today-90*864e5).toISOString().slice(0,10).replace(/-/g,'');
@@ -398,6 +398,8 @@ async function renderDetail(s){
     <div id="dtabContent"><div class="li"><span class="spinner"></span></div></div>
   </div>`;
   curDtab='overview';
+  // 종목정보 보완: rank에 shares/high52 없을 수 있어 /price 추가 조회
+  if(!s.high52||!s.shares){wFetch('/price?code='+s.code).then(p=>{if(!p||p.error)return;curStock={...curStock,...p};updateMetrics(curStock);}).catch(()=>{});}
   await renderDtab(s);
 }
 
@@ -446,7 +448,7 @@ async function renderDtab(s){
     drawIncomeChart(incomeData, s);
 
   }else if(curDtab==='disclosure'){
-    const items=await fetchDart(s.name);
+    const items=await fetchDart(s.code, s.name);
     if(!items.length){
       c.innerHTML=`<div class="panel"><div class="pt">최근 공시 (DART)</div><div style="color:var(--tx3);font-size:12px;padding:12px 0">공시 데이터를 가져오지 못했습니다. <a href="https://dart.fss.or.kr/dsab001/search.ax?textCrpNm=${encodeURIComponent(s.name)}" target="_blank" rel="noopener" style="color:var(--ac)">DART에서 직접 확인 ↗</a></div></div>`;
       return;
@@ -500,7 +502,7 @@ async function renderDtab(s){
         <div id="shHolder"><div class="li"><span class="spinner"></span></div></div>
       </div>
     </div>`;
-    loadShareholders(s.name);
+    loadShareholders(s.code, s.name);
   }
 }
 
@@ -525,10 +527,10 @@ async function switchChartMode(mode, code){
   }
 }
 
-async function loadShareholders(name){
+async function loadShareholders(code, name){
   const el=document.getElementById('shHolder');if(!el)return;
   try{
-    const r1=await wFetch(`/dart/company.json?corp_name=${encodeURIComponent(name)}`);
+    const r1=await wFetch(`/dart/company.json?stock_code=${code}`);
     if(!r1?.corp_code){el.innerHTML='<div style="font-size:12px;color:var(--tx3);padding:8px 0">데이터 없음</div>';return;}
     const r2=await wFetch(`/dart/majorstock.json?corp_code=${r1.corp_code}`);
     const list=(r2?.list||[]).slice(0,3);
@@ -586,7 +588,8 @@ function drawIncomeChart(data, s){
     if(ctx)ctx.parentElement.innerHTML=`<div class="li" style="color:var(--tx3)">재무 데이터 없음 — <a href="https://finance.naver.com/item/main.naver?code=${s.code}" target="_blank" style="color:var(--ac)">네이버 금융에서 확인 ↗</a></div>`;
     return;
   }
-  const toB=v=>v==null?null:+(v/1e8).toFixed(0);
+  // Worker에서 이미 억원 단위로 변환해서 옴
+  const toB=v=>v==null?null:Math.round(v);
   const labels=data.map(d=>d.year||'—');
 
   if(ctx){
